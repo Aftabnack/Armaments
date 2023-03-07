@@ -1,0 +1,49 @@
+{
+  "name": "armaments",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "lint:fix": "eslint ./src --ext .jsx,.js,.ts,.tsx --quiet --fix --ignore-path ./.gitignore",
+    "lint:format": "prettier  --loglevel warn --write \"./**/*.{js,jsx,ts,tsx,css,md,json}\" ",
+    "lint": "yarn lint:format && yarn lint:fix "
+  },
+  "dependencies": {
+    "baseui": "12.2.0",
+    "idb": "7.1.1",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "styletron-engine-atomic": "1.5.0",
+    "styletron-react": "6.1.0"
+  },
+  "devDependencies": {
+    "@types/react": "18.0.28",
+    "@types/react-dom": "18.0.11",
+    "@typescript-eslint/eslint-plugin": "5.54.1",
+    "@typescript-eslint/parser": "5.54.1",
+    "@vitejs/plugin-react": "3.1.0",
+    "eslint": "8.35.0",
+    "eslint-config-prettier": "8.7.0",
+    "eslint-plugin-import": "2.27.5",
+    "eslint-plugin-jsx-a11y": "6.7.1",
+    "eslint-plugin-prettier": "4.2.1",
+    "eslint-plugin-react": "7.32.2",
+    "eslint-plugin-simple-import-sort": "10.0.0",
+    "pre-commit": "1.2.2",
+    "prettier": "2.8.4",
+    "typescript": "4.9.5",
+    "vite": "4.1.4"
+  },
+  "pre-commit": "lint",
+  "prettier": {
+    "semi": true,
+    "trailingComma": "none",
+    "singleQuote": true,
+    "printWidth": 90,
+    "tabWidth": 2,
+    "endOfLine": "auto"
+  }
+}
