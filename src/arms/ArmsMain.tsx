@@ -8,6 +8,8 @@ import AddInfo from '../assets/add_info.svg';
 import { ParagraphMedium } from 'baseui/typography';
 import { Button } from 'baseui/button';
 import { Armament, ArmSet, calculateArmsPower } from '../utils';
+import AddArmament from './AddArmament';
+import ArmsTable from './ArmsTable';
 
 type ArmsData = {
   arms: Armament[];
@@ -17,6 +19,7 @@ type ArmsData = {
 export default function ArmsMain() {
   const [css, theme] = useStyletron();
 
+  const [showAddArmament, setShowAddArmament] = useState(false);
   const [activeView, setActiveView] = useState<React.Key>('0');
   const [armData, setArmData] = useState<ArmsData>({ arms: [], armSets: [] });
 
@@ -35,39 +38,67 @@ export default function ArmsMain() {
     padding: theme.sizing.scale600
   });
 
+  const renderAddCard = (isSet: boolean) => {
+    return (
+      <Card
+        headerImage={AddInfo}
+        overrides={{
+          HeaderImage: {
+            style: {
+              backgroundColor: theme.colors.backgroundOverlayLight,
+              padding: theme.sizing.scale400,
+              width: '100%'
+            }
+          }
+        }}
+      >
+        <StyledBody>
+          <ParagraphMedium className={css({ marginBottom: theme.sizing.scale400 })}>
+            {isSet
+              ? 'Create new Armament set'
+              : 'Start adding armaments to make use of this tool'}
+          </ParagraphMedium>
+          <Button
+            size="compact"
+            onClick={() => {
+              setShowAddArmament(true);
+            }}
+          >
+            {isSet ? 'Create new set' : 'Add Armaments'}
+          </Button>
+        </StyledBody>
+      </Card>
+    );
+  };
+
   return (
     <StyledBody className={contentCls}>
-      {armData.arms.length ? (
-        <Tabs
-          activeKey={activeView}
-          onChange={({ activeKey }) => {
-            setActiveView(activeKey);
-          }}
-        >
-          <Tab title="Armaments">Content 1</Tab>
-          <Tab title="ArmSets">Content 2</Tab>
-        </Tabs>
-      ) : (
-        <Card
-          headerImage={AddInfo}
-          overrides={{
-            HeaderImage: {
-              style: {
-                backgroundColor: theme.colors.backgroundOverlayLight,
-                padding: theme.sizing.scale400,
-                width: '100%'
-              }
-            }
-          }}
-        >
-          <StyledBody>
-            <ParagraphMedium className={css({ marginBottom: theme.sizing.scale400 })}>
-              Start adding armaments to make use of this tool
-            </ParagraphMedium>
-            <Button size="compact">Add Armaments</Button>
-          </StyledBody>
-        </Card>
-      )}
+      <Tabs
+        activeKey={activeView}
+        onChange={({ activeKey }) => {
+          setActiveView(activeKey);
+        }}
+      >
+        <Tab title="Armaments">
+          {armData.arms.length ? (
+            <ArmsTable arms={armData.arms} armsPower={armsPower} />
+          ) : (
+            renderAddCard(false)
+          )}
+        </Tab>
+        <Tab title="ArmSets">
+          {armData.arms.length ? (
+            armData.armSets.length ? (
+              <div>Show the sets</div>
+            ) : (
+              renderAddCard(true)
+            )
+          ) : (
+            renderAddCard(false)
+          )}
+        </Tab>
+      </Tabs>
+      <AddArmament isOpen={showAddArmament} setIsOpen={setShowAddArmament} />
     </StyledBody>
   );
 }

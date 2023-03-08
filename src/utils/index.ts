@@ -39,6 +39,8 @@ type Armament = {
   type: ArmType;
 };
 
+type OnlyStatKeys = Exclude<keyof Armament, 'type' | 'id' | 'formation'>;
+
 type ArmPower = Record<TroopType, { field: number }>;
 type ArmsPower = Record<number, ArmPower>;
 
@@ -81,6 +83,53 @@ const fieldMultipliers: PowerFactors = {
   normalDmgRed: 7,
   normalAtk: 10,
   counterAtk: 9
+};
+
+export const labelMap: Record<OnlyStatKeys, string> = {
+  cavA: 'Cavalry Attack',
+  cavD: 'Cavalry Defense',
+  cavH: 'Cavalry Health',
+  cavM: 'March Speed (cavs)',
+  infA: 'Infantry Attack',
+  infD: 'Infantry Defense',
+  infH: 'Infantry Health',
+  infM: 'March Speed (inf)',
+  arcA: 'Archers Attack',
+  arcD: 'Archers Defense',
+  arcH: 'Archers Health',
+  arcM: 'March Speed (arch)',
+  allA: 'All Attack',
+  allD: 'All Defense',
+  allH: 'All Health',
+  allM: 'March Speed',
+  allDmg: 'All Dmg',
+  skillDmg: 'Skill Dmg',
+  normalDmg: 'Normal Dmg',
+  allDmgRed: 'All Dmg Reduction',
+  skillDmgRed: 'Skill Dmg Reduction',
+  normalDmgRed: 'Normal Dmg Reduction',
+  normalAtk: 'Normal Attack',
+  counterAtk: 'Counter Attack'
+};
+
+export const statGrouping: Record<string, OnlyStatKeys[]> = {
+  all: [
+    'allA',
+    'allD',
+    'allH',
+    'allM',
+    'allDmg',
+    'skillDmg',
+    'normalDmg',
+    'allDmgRed',
+    'skillDmgRed',
+    'normalDmgRed',
+    'normalAtk',
+    'counterAtk'
+  ],
+  cav: ['cavA', 'cavD', 'cavH', 'cavM'],
+  inf: ['infA', 'infD', 'infH', 'infM'],
+  arc: ['arcA', 'arcD', 'arcH', 'arcM']
 };
 
 export function addFormationBuff(arm: Armament): Armament {
@@ -151,8 +200,7 @@ function finalPower(
   multipliers: PowerFactors
 ): number {
   const finalStats = getStatsForTroopType(arm, troopType);
-  return Object.keys(finalStats).reduce((acc, curr) => {
-    // @ts-ignore
+  return (Object.keys(finalStats) as Array<keyof PowerFactors>).reduce((acc, curr) => {
     return acc + finalStats[curr] * multipliers[curr];
   }, 0);
 }
@@ -176,4 +224,4 @@ export function calculateArmsPower(arms: Armament[]): ArmsPower {
   return toReturn;
 }
 
-export type { Armament, Formations, ArmSet, ArmType };
+export type { Armament, Formations, ArmSet, ArmType, ArmsPower };
