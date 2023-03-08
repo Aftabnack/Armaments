@@ -1,7 +1,8 @@
 import { useStyletron } from 'baseui';
-import { AppNavBar } from 'baseui/app-nav-bar';
+import { AppNavBar, NavItem, setItemActive } from 'baseui/app-nav-bar';
 import { StyledBody } from 'baseui/card';
 import { LabelLarge } from 'baseui/typography';
+import { useState } from 'react';
 import ArmsMain from './arms/ArmsMain';
 import DBError from './assets/db_error.svg';
 

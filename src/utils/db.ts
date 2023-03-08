@@ -1,48 +1,10 @@
 import { DBSchema, IDBPDatabase, openDB } from 'idb';
-
-//Types
-type Formations =
-  | 'arch'
-  | 'wedge'
-  | 'echelon'
-  | 'hollow square'
-  | 'v'
-  | 'triple line'
-  | 'line';
-type ArmType = 'scroll' | 'instrument' | 'flag' | 'emblem';
-type ArmsData = {
-  allA?: number;
-  allD?: number;
-  allH?: number;
-  cavA?: number;
-  cavD?: number;
-  cavH?: number;
-  infA?: number;
-  infD?: number;
-  infH?: number;
-  arcA?: number;
-  arcD?: number;
-  arcH?: number;
-  allDmg?: number;
-  skillDmg?: number;
-  normalDmg?: number;
-  formation: Formations;
-  type: ArmType;
-};
-
-type ArmSet = {
-  formation: Formations;
-  troopType: 'cavalry' | 'archers' | 'infantry';
-  scroll: number; //id of armament
-  instrument: number; //id of armament
-  flag: number; //id of armament
-  emblem: number; //id of armament
-};
+import { Armament, ArmSet } from '.';
 
 interface ArmsDB extends DBSchema {
   arms: {
     key: number;
-    value: ArmsData;
+    value: Armament;
     // indexes: { 'by-price': number };
   };
   armset: {
@@ -73,4 +35,3 @@ export async function dbInit() {
 }
 
 export { dbConn };
-export type { ArmsData, Formations, ArmSet, ArmType };

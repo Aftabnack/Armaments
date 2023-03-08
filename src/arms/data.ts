@@ -1,13 +1,12 @@
-import { ArmsData, dbConn } from '../utils/db';
+import { Armament } from '../utils';
+import { dbConn } from '../utils/db';
 
-export async function getArms() {
-  return await dbConn.current.getAll('arms');
-}
-
-export async function addArmament(data: ArmsData) {
+export async function addArmament(data: Armament) {
   return await dbConn.current.add('arms', data);
 }
 
-export async function getArmSets() {
-  return await dbConn.current.getAll('armset');
+export async function getArmsData() {
+  const arms = await dbConn.current.getAll('arms');
+  const armSets = await dbConn.current.getAll('armset');
+  return { arms, armSets };
 }
