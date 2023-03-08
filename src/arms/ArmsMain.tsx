@@ -2,14 +2,14 @@ import { useStyletron } from 'baseui';
 import { Card, StyledBody } from 'baseui/card';
 import { Tabs, Tab } from 'baseui/tabs-motion';
 import React, { useEffect, useMemo, useState } from 'react';
-import { getArmsData } from './data';
+import { addArmament, getArmsData } from './data';
 
 import AddInfo from '../assets/add_info.svg';
 import { ParagraphMedium } from 'baseui/typography';
 import { Button } from 'baseui/button';
 import { Armament, ArmSet, calculateArmsPower } from '../utils';
 import AddArmament from './AddArmament';
-import ArmsTable from './ArmsTable';
+import ArmsList from './ArmsList';
 
 type ArmsData = {
   arms: Armament[];
@@ -25,13 +25,23 @@ export default function ArmsMain() {
 
   const armsPower = useMemo(() => {
     return calculateArmsPower(armData.arms);
-  }, armData.arms);
+  }, [armData.arms]);
+
+  const addNewArmament = (arm: Armament) => {
+    addArmament(arm).then((newId) => {
+      setArmData((old) => {
+        old.arms = old.arms.concat([{ ...arm, id: newId }]);
+        return old;
+      });
+    });
+  };
 
   useEffect(() => {
     getArmsData().then(setArmData);
   }, []);
 
   const contentCls = css({
+    position: 'relative',
     display: 'flex',
     height: '100%',
     flexDirection: 'column',
@@ -79,14 +89,14 @@ export default function ArmsMain() {
           setActiveView(activeKey);
         }}
       >
-        <Tab title="Armaments">
+        <Tab title="List">
           {armData.arms.length ? (
-            <ArmsTable arms={armData.arms} armsPower={armsPower} />
+            <ArmsList arms={armData.arms} armsPower={armsPower} />
           ) : (
             renderAddCard(false)
           )}
         </Tab>
-        <Tab title="ArmSets">
+        {/* <Tab title="ArmSets">
           {armData.arms.length ? (
             armData.armSets.length ? (
               <div>Show the sets</div>
@@ -96,9 +106,22 @@ export default function ArmsMain() {
           ) : (
             renderAddCard(false)
           )}
-        </Tab>
+        </Tab> */}
       </Tabs>
-      <AddArmament isOpen={showAddArmament} setIsOpen={setShowAddArmament} />
+      <AddArmament
+        isOpen={showAddArmament}
+        setIsOpen={setShowAddArmament}
+        addNewArmament={addNewArmament}
+      />
+
+      <Button
+        shape="pill"
+        onClick={() => setShowAddArmament(true)}
+        size="compact"
+        className={css({ position: 'absolute', top: '22px', right: '16px' })}
+      >
+        Add Armament
+      </Button>
     </StyledBody>
   );
 }
