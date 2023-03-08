@@ -3,31 +3,40 @@ import { HeadingMedium, HeadingXSmall } from 'baseui/typography';
 import { StyledDivider } from 'baseui/divider';
 import { FlexGrid, FlexGridItem } from 'baseui/flex-grid';
 import { FormControl } from 'baseui/form-control';
-import { StatefulSelect } from 'baseui/select';
-import { ArmType, Formations, labelMap, statGrouping } from '../utils';
+import { Select, Value } from 'baseui/select';
+import {
+  Armament,
+  ArmType,
+  Formations,
+  labelMap,
+  OnlyStatKeys,
+  statGrouping
+} from '../utils';
 import { useStyletron } from 'baseui';
 import { StatefulInput } from 'baseui/input';
+import { Button } from 'baseui/button';
+import { useState } from 'react';
 
 type CompProps = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const formationOptions: { id: Formations; label: string }[] = [
-  { label: 'Wedge', id: 'wedge' },
-  { label: 'Arch', id: 'arch' },
-  { label: 'Echelon', id: 'echelon' },
-  { label: 'Hollow Square', id: 'hollow square' },
-  { label: 'Line', id: 'line' },
-  { label: 'Triple Line', id: 'triple line' },
-  { label: 'V', id: 'v' }
+const formationOptions: { val: Formations; label: string }[] = [
+  { label: 'Wedge', val: 'wedge' },
+  { label: 'Arch', val: 'arch' },
+  { label: 'Echelon', val: 'echelon' },
+  { label: 'Hollow Square', val: 'hollow square' },
+  { label: 'Line', val: 'line' },
+  { label: 'Triple Line', val: 'triple line' },
+  { label: 'V', val: 'v' }
 ];
 
-const armType: { id: ArmType; label: string }[] = [
-  { label: 'Instrument', id: 'instrument' },
-  { label: 'Emblem', id: 'emblem' },
-  { label: 'Flag', id: 'flag' },
-  { label: 'Scroll', id: 'scroll' }
+const armType: { val: ArmType; label: string }[] = [
+  { label: 'Instrument', val: 'instrument' },
+  { label: 'Emblem', val: 'emblem' },
+  { label: 'Flag', val: 'flag' },
+  { label: 'Scroll', val: 'scroll' }
 ];
 
 const formElements = {
@@ -40,6 +49,34 @@ const formElements = {
 export default function AddArmament(props: CompProps) {
   const { isOpen, setIsOpen } = props;
   const [css, theme] = useStyletron();
+
+  const [formation, setFormation] = useState<Value>([formationOptions[0]]);
+  const [type, setType] = useState<Value>([armType[0]]);
+
+  const submitHandler = () => {
+    //@ts-ignore
+    const data = new FormData(document.forms.add_armament);
+    let hasData = false;
+    const armament: Armament = {
+      formation: formation[0].val,
+      type: type[0].val
+    };
+    data.forEach((value, key) => {
+      //@ts-ignore
+      const val = parseInt(value, 10);
+      if (val > 0) {
+        //@ts-ignore
+        armament[key] = val;
+        hasData = true;
+      }
+    });
+    if (!hasData) {
+      //Show toast
+    } else {
+      //Add Armament
+    }
+  };
+
   return (
     <Drawer isOpen={isOpen} animate onClose={() => setIsOpen(false)} size={SIZE.full}>
       <HeadingMedium>Add Armament</HeadingMedium>
@@ -50,26 +87,24 @@ export default function AddArmament(props: CompProps) {
       </Banner> */}
       <form id="add_armament">
         <FormControl label="Select Formation">
-          <StatefulSelect
-            name="formation"
+          <Select
             options={formationOptions}
-            placeholder=""
             //@ts-ignore
-            initialState={{ value: formationOptions[0] }}
+            value={formation}
+            onChange={({ value }) => setFormation(value)}
             searchable={false}
             clearable={false}
-          ></StatefulSelect>
+          />
         </FormControl>
         <FormControl label="Select Armament Type">
-          <StatefulSelect
-            name="type"
+          <Select
             options={armType}
-            placeholder=""
             //@ts-ignore
-            initialState={{ value: armType[0] }}
+            value={type}
+            onChange={({ value }) => setType(value)}
             searchable={false}
             clearable={false}
-          ></StatefulSelect>
+          />
         </FormControl>
         <HeadingXSmall>All Stats</HeadingXSmall>
         <FlexGrid flexGridColumnCount={2} flexGridColumnGap="scale400">
@@ -132,6 +167,9 @@ export default function AddArmament(props: CompProps) {
           ))}
         </FlexGrid>
       </form>
+      <Button className={css({ marginTop: theme.sizing.scale800, width: '100%' })}>
+        Submit Information
+      </Button>
     </Drawer>
   );
 }
